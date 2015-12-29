@@ -12,6 +12,7 @@ mongo.connect('mongodb://127.0.0.01/cha', function(err, db){
     var col = db.collection('message');
 
     var test;
+    var test2 = '브랜치를 추가해봄';
 
     //wait for input
     socket.on('input', function(data){
