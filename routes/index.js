@@ -11,7 +11,6 @@ mongo.connect('mongodb://127.0.0.01/cha', function(err, db){
   client. on(connect, function(socket){
     var col = db.collection('message');
 
-    var test;
 
     //wait for input
     socket.on('input', function(data){
