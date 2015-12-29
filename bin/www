@@ -1,0 +1,119 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('untitled1222:server');
+var http = require('http');
+var async = require('async');
+async.parallel([
+    // 첫번째 실행
+    // 다음 task으로 이동하기 위해서는 callback을 실행해야하고,
+    // 사용방법은 callback(에러, 결과값[, 결과값#2...]) 형태로 사용됩니다.
+    // -----------------------------------------------------
+    function(callback) {
+      setTimeout(function() {
+        console.log('--- async.parallel::ste#1 ---');
+        // 다음 task으로 이동하기 위해 callback 실행
+        // one값 전달'
+        var obj;
+        callback(null, obj);
+      }, 50); //settimeout
+    },
+    function(callback) {
+      setTimeout(function(){
+        console.log('--- async.parallel::ste#2 ---');
+        // 다음 task으로 이동하기 위해 callback 실행
+        // two값 전달
+        callback(callback, 'two');
+      }, 100);
+    },
+  ],
+// 모든 task를 끝내고, 아래 callback으로 에러와 배열인자가 전달됩니다.
+// ------------------------------------------------------
+  function(err, results) {
+    console.log('--- async parallel result #1 ---');
+    console.log(arguments);
+  });
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
